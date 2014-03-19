@@ -49,27 +49,61 @@ void test_state(){
 	
 	//test player 1 option
 	setState(pt, PLAYER_ONE);
-	assert_int_equal(getState(pt), PLAYER_ONE);
+	assert_int_equal(PLAYER_ONE, getState(pt));
 	
 	//test player 2 option
 	setState(pt, PLAYER_TWO);
-	assert_int_equal(getState(pt), PLAYER_TWO);
+	assert_int_equal(PLAYER_TWO, getState(pt));
 
 	free(pt);
 	
 }
 
-void test_fixture_one(){
+void test_get_score(){
+	point_type pt[4];
+
+	point_type* ppt[4];
+	ppt[0] = &pt[0];
+	ppt[1] = &pt[1];
+	ppt[2] = &pt[2];
+	ppt[3] = &pt[3];
+
+	setState(&pt[0], PLAYER_ONE);
+	setState(&pt[1], PLAYER_ONE);
+	setState(&pt[2], PLAYER_ONE);
+	setState(&pt[3], PLAYER_ONE);
+	
+	assert_int_equal(4, getScore(ppt));
+	
+	//printf("Score %ld\n", getScore(ppt));
+	setState(&pt[0], PLAYER_TWO);
+	setState(&pt[1], PLAYER_TWO);
+	setState(&pt[2], PLAYER_TWO);
+	setState(&pt[3], PLAYER_TWO);
+	
+	//printf("Score %ld\n", getScore(ppt));
+	assert_int_equal(-4, getScore(ppt));
+	
+}
+
+void test_fixture_moves(){
 	test_fixture_start();
-	run_test(test_state);
 	run_test(test_valid_moves);
 	run_test(test_moves_left);
 	run_test(test_undo_move);
 	test_fixture_end();
 }
 
+void test_fixture_state(){
+	test_fixture_start();
+	run_test(test_state);
+	run_test(test_get_score);
+	test_fixture_end();
+}
+
 void all_tests(){
-	test_fixture_one();
+	test_fixture_moves();
+	test_fixture_state();
 }
 
 void test_setup(){
