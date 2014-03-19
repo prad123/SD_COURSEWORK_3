@@ -75,15 +75,95 @@ void test_get_score(){
 	
 	assert_int_equal(4, getScore(ppt));
 	
-	//printf("Score %ld\n", getScore(ppt));
 	setState(&pt[0], PLAYER_TWO);
 	setState(&pt[1], PLAYER_TWO);
 	setState(&pt[2], PLAYER_TWO);
 	setState(&pt[3], PLAYER_TWO);
 	
-	//printf("Score %ld\n", getScore(ppt));
 	assert_int_equal(-4, getScore(ppt));
 	
+}
+
+//helper function to simulate winning moves
+void winning_move(int expected_winner){
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 0); //player one moves
+	makeMove(g_board, 1); //player two moves
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 0); //player one moves
+	makeMove(g_board, 2); //player two moves
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 0); //player one moves
+	makeMove(g_board, 3); //player two moves
+
+	assert_true(winnerIs(g_board) == 0);
+	makeMove(g_board, 0); //player one moves
+	makeMove(g_board, 3); //player two moves
+
+	assert_int_equal(expected_winner, winnerIs(g_board));
+}
+
+void test_winner_is_player_one(){
+	//we simulate player one winning
+	//by making winning moves	
+	winning_move(PLAYER_ONE);
+}
+
+void test_winner_is_player_two(){
+	makeMove(g_board, 6); //dummy move by player 1
+	winning_move(PLAYER_TWO);
+}
+
+void test_horizontal_win(){
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 0); //player one moves
+	makeMove(g_board, 4); //player two moves
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 1); //player one moves
+	makeMove(g_board, 5); //player two moves
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 2); //player one moves
+	makeMove(g_board, 6); //player two moves
+
+	assert_true(winnerIs(g_board) == 0);
+	makeMove(g_board, 3); //player one moves
+	makeMove(g_board, 6); //player two moves
+
+	assert_int_equal(PLAYER_ONE, winnerIs(g_board));
+}
+
+void test_diagonal_win(){
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 0); //player one moves
+	makeMove(g_board, 1); //player two moves
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 1); //player one moves
+	makeMove(g_board, 2); //player two moves
+	assert_true(winnerIs(g_board) == 0);
+
+	makeMove(g_board, 3); //player one moves
+	makeMove(g_board, 2); //player two moves
+
+	assert_true(winnerIs(g_board) == 0);
+	makeMove(g_board, 2); //player one moves
+	makeMove(g_board, 3); //player two moves
+	
+	assert_true(winnerIs(g_board) == 0);
+	makeMove(g_board, 4); //player one moves
+	makeMove(g_board, 3); //player two moves
+
+	assert_true(winnerIs(g_board) == 0);
+	makeMove(g_board, 3); //player one moves
+
+	assert_int_equal(PLAYER_ONE, winnerIs(g_board));
 }
 
 void test_fixture_moves(){
@@ -101,9 +181,29 @@ void test_fixture_state(){
 	test_fixture_end();
 }
 
+void test_fixture_winner(){
+	test_fixture_start();
+	run_test(test_winner_is_player_one);
+	test_fixture_end();
+	
+	test_fixture_start();
+	run_test(test_winner_is_player_two);
+	test_fixture_end();
+
+
+	test_fixture_start();
+	run_test(test_horizontal_win);
+	test_fixture_end();
+
+	test_fixture_start();
+	run_test(test_diagonal_win);
+	test_fixture_end();
+}
+
 void all_tests(){
 	test_fixture_moves();
 	test_fixture_state();
+	test_fixture_winner();
 }
 
 void test_setup(){
