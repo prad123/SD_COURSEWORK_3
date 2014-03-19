@@ -28,6 +28,22 @@ void test_moves_left(){
 	assert_true(validMovesLeft(g_board)==0);
 }
 
+void test_undo_move(){
+	//if I am able to insert 7th entry in a column
+	//after undoing the 8th entry then my test succeeds
+		
+	int i = 0;
+	for(i=0; i < rows; ++i){
+		assert_true(validMove(g_board,4)==1);
+		makeMove(g_board, 4);
+	}
+
+	assert_true(validMove(g_board,4)==0);
+	undoMove(g_board);
+	assert_true(validMove(g_board,4)==1);
+	
+}
+
 void test_state(){
 	point_type* pt = newPoint(0,0);
 	
@@ -48,6 +64,7 @@ void test_fixture_one(){
 	run_test(test_state);
 	run_test(test_valid_moves);
 	run_test(test_moves_left);
+	run_test(test_undo_move);
 	test_fixture_end();
 }
 
