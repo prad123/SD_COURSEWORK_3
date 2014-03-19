@@ -166,6 +166,14 @@ void test_diagonal_win(){
 	assert_int_equal(PLAYER_ONE, winnerIs(g_board));
 }
 
+void test_reasoned_move(){
+	makeMove(g_board,0);
+	assert_int_equal(3, getReasonedMove(g_board));
+	
+	makeMove(g_board,1);
+	assert_int_equal(6, getReasonedMove(g_board));
+}
+
 void test_fixture_moves(){
 	test_fixture_start();
 	run_test(test_valid_moves);
@@ -200,10 +208,17 @@ void test_fixture_winner(){
 	test_fixture_end();
 }
 
+void test_fixture_game_logic(){
+	test_fixture_start();
+	run_test(test_reasoned_move);
+	test_fixture_end();	
+}
+
 void all_tests(){
 	test_fixture_moves();
 	test_fixture_state();
 	test_fixture_winner();
+	test_fixture_game_logic();
 }
 
 void test_setup(){
