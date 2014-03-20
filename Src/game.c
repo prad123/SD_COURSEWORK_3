@@ -4,11 +4,14 @@
 #include <limits.h>
 #include "game.h"
 
-point_type * newPoint(int a, int b)
+int minValue(board_type * cB, int ply);
+int maxValue(board_type * cB, int ply);
+
+point_type * newPoint(int x, int y)
 {
     point_type * p = (point_type*)malloc(sizeof(point_type));
-    p->x=a;
-    p->y=b;
+    p->x=x;
+    p->y=y;
     p->state=EMPTY;
     return p;
 }
@@ -17,14 +20,14 @@ void deletepoint(point_type* p)
     free(p);
 }
 
-void setState(point_type * a, int player)
+void setState(point_type * p, int player)
 {
-    a->state=player;
+    p->state=player;
 }
 
-int getState(point_type * a)
+int getState(point_type * p)
 {
-    return a->state;
+    return p->state;
 }
 
 
@@ -90,11 +93,11 @@ point_type*** generateCL(point_type *** grid)
     return lines;
 }
 
-board_type * createBoard(int a, int b)
+board_type * createBoard(int cols, int rows)
 {
     board_type * p = (board_type*)malloc(sizeof(board_type));
-    p->cols=a;
-    p->rows=b;
+    p->cols=cols;
+    p->rows=rows;
     p->lm=-1;
     p->cp=PLAYER_ONE;
     p->heights = (int *)malloc(p->cols * sizeof(int));
@@ -136,8 +139,6 @@ int validMove(board_type * b, int column)
 
 void makeMove(board_type * b, int column)
 {
-
-
     setState(b->grid[column][b->heights[column]],b->cp);
 
     b->heights[column]++;
@@ -217,8 +218,6 @@ int winnerIs(board_type * b)
 char * toString(board_type * b)
 {
 
-
-
     char * temp = (char *)malloc(b->rows*(b->cols+1)*sizeof(char)+1);
 
     char * curr = temp;
@@ -248,9 +247,7 @@ int cp(board_type * b)
 }
 
 
-int minValue(board_type * cB, int ply);
-int maxValue(board_type * cB, int ply);
-int getReasonedMove(board_type * cB)
+int getReasonedMove(board_type * b)
 {
     int moves[7];
     int highest = 0;
@@ -258,19 +255,19 @@ int getReasonedMove(board_type * cB)
     for( i=0;i<7;i++)
     {
 	moves[i] = INT_MIN;
-	if(validMove(cB, i))
+	if(validMove(b, i))
 	{
-	    makeMove(cB,i);
-	    moves[i] = minValue(cB,4);
+	    makeMove(b,i);
+	    moves[i] = minValue(b,4);
 	    if(moves[i]>=moves[highest])
 		highest=i;
-	    undoMove(cB);
+	    undoMove(b);
 	} 
     }
     return highest;
 }
 
-int minValue(board_type * cB, int ply)
+int minValue(board_type * b, int ply)
 {
     int moves[7];
     int lowest = 0;
@@ -278,23 +275,23 @@ int minValue(board_type * cB, int ply)
     for( i=0;i<7;i++)
     {
 	moves[i] = INT_MAX;
-	if(validMove(cB,i))
+	if(validMove(b,i))
 	{
-	    makeMove(cB,i);
-	    if((winnerIs(cB) == 0) && ply>0)
+	    makeMove(b,i);
+	    if((winnerIs(b) == 0) && ply>0)
 	    {
-		moves[i] = maxValue(cB,ply-1);
+		moves[i] = maxValue(b,ply-1);
 	    }
 	    else 
 	    {
 
-		moves[i] = -getStrength(cB);
+		moves[i] = -getStrength(b);
 
 
 	    }
 	    if(moves[i]<moves[lowest])
 		lowest=i;
-	    undoMove(cB);
+	    undoMove(b);
 	}
 
     }
@@ -303,7 +300,7 @@ int minValue(board_type * cB, int ply)
 
 }
 
-int maxValue(board_type * cB, int ply)
+int maxValue(board_type * b, int ply)
 {
 
     int moves[7];
@@ -312,18 +309,18 @@ int maxValue(board_type * cB, int ply)
     for( i=0;i<7;i++)
     {
 	moves[i] = INT_MAX;
-	if(validMove(cB,i))
+	if(validMove(b,i))
 	{
-	    makeMove(cB,i);
-	    if((winnerIs(cB) == 0) && ply>0)
+	    makeMove(b,i);
+	    if((winnerIs(b) == 0) && ply>0)
 	    {
-		moves[i] = minValue(cB,ply-1);
+		moves[i] = minValue(b, ply-1);
 	    }
 	    else 
-		moves[i] =-getStrength(cB);
+		moves[i] =-getStrength(b);
 	    if(moves[i]<moves[highest])
 		highest=i;
-	    undoMove(cB);
+	    undoMove(b);
 	}
 
     }

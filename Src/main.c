@@ -20,20 +20,19 @@ int main(int argc, char** argv) {
 	    makeMove(b, getReasonedMove(b));// Make it so!
 
 	char* output = toString(b);
-	//printf("%s\n", toString(b));
 	printf("%s\n", output);
 	free(output);
 
 
     }
-	int i, j;
-	for(i=0; i<b->cols; ++i){
-		for(j=0; j < b->rows; j++){
-			deletepoint(b->grid[i][j]);
-		}
-		free(b->grid[i]);
+    int i, j;
+    for(i=0; i<b->cols; ++i){
+	for(j=0; j < b->rows; j++){
+	    deletepoint(b->grid[i][j]);
 	}
-	deleteboard(b);
+	free(b->grid[i]);
+    }
+    deleteboard(b);
 
     return 0;
 

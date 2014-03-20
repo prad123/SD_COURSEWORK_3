@@ -28,25 +28,17 @@ struct board {
     } ;
 typedef struct board board_type;
 
-point_type * newPoint(int a, int b);
-void deletepoint(point_type* p);
-void setState(point_type * a, int player);
-int getState(point_type * a);
-point_type*** generateCL(point_type *** grid);
-board_type * createBoard(int a, int b);
+point_type * newPoint(int x, int y);
+void setState(point_type * p, int player);
+int getState(point_type * p);
+board_type * createBoard(int x, int y);
 void deleteboard(board_type* p);
 int validMove(board_type * b, int column);
 void makeMove(board_type * b, int column);
 void undoMove(board_type * b);
 int validMovesLeft(board_type * b);
-int getScore(point_type * points[]);
-
-int getStrength(board_type * b);
+int getReasonedMove(board_type* b);
 int winnerIs(board_type * b);
 char * toString(board_type * b);
-int cp(board_type * b);
-int getReasonedMove(board_type * cB);
-int minValue(board_type * cB, int ply);
-int maxValue(board_type * cB, int ply);
 
 #endif
