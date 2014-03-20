@@ -85,8 +85,19 @@ void test_get_score(){
 }
 
 //helper function to simulate winning moves
-void winning_move(int expected_winner){
-	assert_true(winnerIs(g_board) == 0);
+void winning_move(int* moves, int expected_winner){
+	int i = 0;
+	while((winnerIs(g_board) == 0) && validMovesLeft(g_board)){
+		if(getCurrentPlayer(g_board) == PLAYER_ONE){
+			makeMove(g_board, moves[i]);
+			++i;
+		} else {
+			makeMove(g_board, getReasonedMove(g_board));
+		}
+	}
+	assert_int_equal(expected_winner, winnerIs(g_board));
+	/*
+ * assert_true(winnerIs(g_board) == 0);
 
 	makeMove(g_board, 0); //player one moves
 	makeMove(g_board, 1); //player two moves
@@ -104,17 +115,27 @@ void winning_move(int expected_winner){
 	makeMove(g_board, 3); //player two moves
 
 	assert_int_equal(expected_winner, winnerIs(g_board));
+*/
 }
 
 void test_winner_is_player_one(){
 	//we simulate player one winning
 	//by making winning moves	
-	winning_move(PLAYER_ONE);
+	//winning_move(PLAYER_ONE);
+	int moves[] = {6,0,0,3,6,2,6,0,6,3,5,5,2,5,2,4,4};
+	winning_move(moves, PLAYER_ONE);
 }
 
-void test_winner_is_player_two(){
-	makeMove(g_board, 6); //dummy move by player 1
-	winning_move(PLAYER_TWO);
+void test_winner_is_player_computer(){
+	//makeMove(g_board, 6); //dummy move by player 1
+	//winning_move(PLAYER_TWO);
+	int moves[] = {2,2,1,3,4,4,5};
+	winning_move(moves, PLAYER_TWO);
+}
+
+void test_match_draw(){
+	int moves[] = {3,3,5,4,4,6,2,1,5,6,2,4,5,3,1,6,6,1,0,0,0};
+	winning_move(moves, EMPTY);
 }
 
 void test_horizontal_win(){
@@ -191,20 +212,24 @@ void test_fixture_state(){
 
 void test_fixture_winner(){
 	test_fixture_start();
-	run_test(test_winner_is_player_one);
-	test_fixture_end();
-	
-	test_fixture_start();
-	run_test(test_winner_is_player_two);
-	test_fixture_end();
-
-
-	test_fixture_start();
 	run_test(test_horizontal_win);
 	test_fixture_end();
 
 	test_fixture_start();
 	run_test(test_diagonal_win);
+	test_fixture_end();
+	
+	test_fixture_start();
+	run_test(test_winner_is_player_one);
+	test_fixture_end();
+	
+	test_fixture_start();
+	run_test(test_winner_is_player_computer);
+	test_fixture_end();
+
+
+	test_fixture_start();
+	run_test(test_match_draw);
 	test_fixture_end();
 }
 
