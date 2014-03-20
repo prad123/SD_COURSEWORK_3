@@ -45,17 +45,15 @@ void test_undo_move(){
 }
 
 void test_set_player(){
-	point_type* pt = newPoint(0,0);
+	point_type pt = newPoint(0,0);
 	
 	//test player 1 option
-	setPlayer(pt, PLAYER_ONE);
-	assert_int_equal(PLAYER_ONE, getPlayer(pt));
+	setPlayer(&pt, PLAYER_ONE);
+	assert_int_equal(PLAYER_ONE, getPlayer(&pt));
 	
 	//test player 2 option
-	setPlayer(pt, PLAYER_TWO);
-	assert_int_equal(PLAYER_TWO, getPlayer(pt));
-
-	free(pt);
+	setPlayer(&pt, PLAYER_TWO);
+	assert_int_equal(PLAYER_TWO, getPlayer(&pt));
 	
 }
 

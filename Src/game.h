@@ -16,21 +16,21 @@ typedef struct point point_type;
 
 struct board {
 
-	point_type*** grid;	//grid of points
-	int * column_height;	//number of tokens in a column
+	point_type grid[7][6];	//grid of points
+	int  column_height[7];	//number of tokens in a column
 
 	int n_cols;		//number of columns
 	int n_rows;		//number of rows
 
-	int * moves_history;	//last moved steps
+	int moves_history[7*6];	//last moved steps
 	int total_moves;	
 
 	int current_player;
-	point_type *** consecutive_lines; //winning line formation
+	point_type * consecutive_lines[69*4]; //winning line formation
     } ;
 typedef struct board board_type;
 
-point_type * newPoint(int x, int y);
+point_type  newPoint(int x, int y);
 void setPlayer(point_type * p, int player);
 int getPlayer(point_type * p);
 board_type * createBoard(int x, int y);
