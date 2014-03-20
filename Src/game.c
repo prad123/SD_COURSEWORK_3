@@ -182,16 +182,6 @@ int getScore(point_type * points[]) {
     }
 
     return 0;
-
-    /*
-
-       if((playerone+playertwo>0) && (!(playerone>0 && playertwo>0)))
-       {
-       return (playerone!=0)?playerone:playertwo;
-       }
-       else
-       return 0;
-       */
 }
 
 int getStrength(board_type * b)
@@ -260,7 +250,6 @@ int cp(board_type * b)
 
 int minValue(board_type * cB, int ply);
 int maxValue(board_type * cB, int ply);
-// should return a number
 int getReasonedMove(board_type * cB)
 {
     int moves[7];
@@ -281,7 +270,6 @@ int getReasonedMove(board_type * cB)
     return highest;
 }
 
-// don't change this unless you understand it
 int minValue(board_type * cB, int ply)
 {
     int moves[7];
@@ -314,7 +302,7 @@ int minValue(board_type * cB, int ply)
     return moves[lowest];
 
 }
-//careful with this
+
 int maxValue(board_type * cB, int ply)
 {
 
