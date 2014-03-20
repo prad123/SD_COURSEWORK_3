@@ -139,7 +139,8 @@ int validMove(board_type * b, int column)
 
 void makeMove(board_type * b, int column)
 {
-    setPlayer(b->grid[column][b->column_height[column]],b->current_player);
+	int row = b->column_height[column];
+    setPlayer(b->grid[column][row],b->current_player);
 
     b->column_height[column]++;
     b->total_moves++;
@@ -150,7 +151,11 @@ void makeMove(board_type * b, int column)
 
 void undoMove(board_type * b)
 {
-    setPlayer(b->grid[b->moves_history[b->total_moves]][b->column_height[b->moves_history[b->total_moves]]-1],(EMPTY));
+	int column = b->moves_history[b->total_moves];
+	int last_position = b->moves_history[b->total_moves];
+	int row = b->column_height[last_position];
+    setPlayer(b->grid[column][row-1],(EMPTY));
+    //setPlayer(b->grid[b->moves_history[b->total_moves]][b->column_height[b->moves_history[b->total_moves]]-1],(EMPTY));
     b->column_height[b->moves_history[b->total_moves]]--;
     b->total_moves--;
     b->current_player = -b->current_player;
