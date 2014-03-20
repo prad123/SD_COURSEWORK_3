@@ -5,13 +5,13 @@
  * 
  */
 int main(int argc, char** argv) {
-    srand (time(NULL));
+//    srand (time(NULL));
     board_type * b = createBoard(7,6);
 
     int input;
     while((winnerIs(b)==0) && validMovesLeft(b))
     {
-	if(cp(b) == PLAYER_ONE)	
+	if(getCurrentPlayer(b) == PLAYER_ONE)	
 	{
 	    scanf("%d", &input);
 	    makeMove(b,input);// Make it so!
@@ -26,8 +26,8 @@ int main(int argc, char** argv) {
 
     }
     int i, j;
-    for(i=0; i<b->cols; ++i){
-	for(j=0; j < b->rows; j++){
+    for(i=0; i<b->n_cols; ++i){
+	for(j=0; j < b->n_rows; j++){
 	    deletepoint(b->grid[i][j]);
 	}
 	free(b->grid[i]);

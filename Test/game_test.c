@@ -44,16 +44,16 @@ void test_undo_move(){
 	
 }
 
-void test_state(){
+void test_set_player(){
 	point_type* pt = newPoint(0,0);
 	
 	//test player 1 option
-	setState(pt, PLAYER_ONE);
-	assert_int_equal(PLAYER_ONE, getState(pt));
+	setPlayer(pt, PLAYER_ONE);
+	assert_int_equal(PLAYER_ONE, getPlayer(pt));
 	
 	//test player 2 option
-	setState(pt, PLAYER_TWO);
-	assert_int_equal(PLAYER_TWO, getState(pt));
+	setPlayer(pt, PLAYER_TWO);
+	assert_int_equal(PLAYER_TWO, getPlayer(pt));
 
 	free(pt);
 	
@@ -68,17 +68,17 @@ void test_get_score(){
 	ppt[2] = &pt[2];
 	ppt[3] = &pt[3];
 
-	setState(&pt[0], PLAYER_ONE);
-	setState(&pt[1], PLAYER_ONE);
-	setState(&pt[2], PLAYER_ONE);
-	setState(&pt[3], PLAYER_ONE);
+	setPlayer(&pt[0], PLAYER_ONE);
+	setPlayer(&pt[1], PLAYER_ONE);
+	setPlayer(&pt[2], PLAYER_ONE);
+	setPlayer(&pt[3], PLAYER_ONE);
 	
 	assert_int_equal(4, getScore(ppt));
 	
-	setState(&pt[0], PLAYER_TWO);
-	setState(&pt[1], PLAYER_TWO);
-	setState(&pt[2], PLAYER_TWO);
-	setState(&pt[3], PLAYER_TWO);
+	setPlayer(&pt[0], PLAYER_TWO);
+	setPlayer(&pt[1], PLAYER_TWO);
+	setPlayer(&pt[2], PLAYER_TWO);
+	setPlayer(&pt[3], PLAYER_TWO);
 	
 	assert_int_equal(-4, getScore(ppt));
 	
@@ -184,7 +184,7 @@ void test_fixture_moves(){
 
 void test_fixture_state(){
 	test_fixture_start();
-	run_test(test_state);
+	run_test(test_set_player);
 	run_test(test_get_score);
 	test_fixture_end();
 }

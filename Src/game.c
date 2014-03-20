@@ -12,7 +12,7 @@ point_type * newPoint(int x, int y)
     point_type * p = (point_type*)malloc(sizeof(point_type));
     p->x=x;
     p->y=y;
-    p->state=EMPTY;
+    p->player=EMPTY;
     return p;
 }
 void deletepoint(point_type* p)
@@ -20,14 +20,14 @@ void deletepoint(point_type* p)
     free(p);
 }
 
-void setState(point_type * p, int player)
+void setPlayer(point_type * p, int player)
 {
-    p->state=player;
+    p->player=player;
 }
 
-int getState(point_type * p)
+int getPlayer(point_type * p)
 {
-    return p->state;
+    return p->player;
 }
 
 
@@ -96,71 +96,70 @@ point_type*** generateCL(point_type *** grid)
 board_type * createBoard(int cols, int rows)
 {
     board_type * p = (board_type*)malloc(sizeof(board_type));
-    p->cols=cols;
-    p->rows=rows;
-    p->lm=-1;
-    p->cp=PLAYER_ONE;
-    p->heights = (int *)malloc(p->cols * sizeof(int));
-    p->grid = (point_type ***)malloc(p->cols * sizeof(point_type **));
+    p->n_cols=cols;
+    p->n_rows=rows;
+    p->total_moves=-1;
+    p->current_player=PLAYER_ONE;
+    p->column_height = (int *)malloc(p->n_cols * sizeof(int));
+    p->grid = (point_type ***)malloc(p->n_cols * sizeof(point_type **));
     int x;
     int y;
-    for(x = 0; x < p->cols; x++)
+    for(x = 0; x < p->n_cols; x++)
     {
-	p->grid[x] =(point_type **)malloc(p->rows * sizeof(point_type *));
-	p->heights[x] = 0;
-	for(y = 0; y< p->rows; y++)
+	p->grid[x] =(point_type **)malloc(p->n_rows * sizeof(point_type *));
+	p->column_height[x] = 0;
+	for(y = 0; y< p->n_rows; y++)
 	{
 	    p->grid[x][y] = newPoint(x,y);
 	}
     }
-    p->moves = (int *)malloc(p->cols * p->rows * sizeof(int));
+    p->moves_history = (int *)malloc(p->n_cols * p->n_rows * sizeof(int));
 
-    p->cl = generateCL(p->grid);
+    p->consecutive_lines = generateCL(p->grid);
     return p;
 }
 
-void deleteboard(board_type* p)
+void deleteboard(board_type* b)
 {
     int i = 0;
     for(i=0; i < 69; ++i){
-	free(p->cl[i]);
+	free(b->consecutive_lines[i]);
     }
-    free(p->cl);
-    free(p->grid);
-    free(p->heights);
-    free(p->moves);
-    free(p);
+    free(b->consecutive_lines);
+    free(b->grid);
+    free(b->column_height);
+    free(b->moves_history);
+    free(b);
 }
 
 int validMove(board_type * b, int column)
 {
-    return b->heights[column]<b->rows;
+    return b->column_height[column] < b->n_rows;
 }
 
 void makeMove(board_type * b, int column)
 {
-    setState(b->grid[column][b->heights[column]],b->cp);
+    setPlayer(b->grid[column][b->column_height[column]],b->current_player);
 
-    b->heights[column]++;
-    b->lm++;
-    b->moves[b->lm]=column;
-    b->cp=-b->cp;
+    b->column_height[column]++;
+    b->total_moves++;
+    b->moves_history[b->total_moves]=column;
+    b->current_player = -b->current_player;
 }
 
 
 void undoMove(board_type * b)
 {
-
-    setState(b->grid[b->moves[b->lm]][b->heights[b->moves[b->lm]]-1],(EMPTY));
-    b->heights[b->moves[b->lm]]--;
-    b->lm--;
-    b->cp=-b->cp;
+    setPlayer(b->grid[b->moves_history[b->total_moves]][b->column_height[b->moves_history[b->total_moves]]-1],(EMPTY));
+    b->column_height[b->moves_history[b->total_moves]]--;
+    b->total_moves--;
+    b->current_player = -b->current_player;
 }
 
 
 int validMovesLeft(board_type * b)
 {
-    return b->lm<((b->cols*b->rows)-1);
+    return b->total_moves < ((b->n_cols*b->n_rows)-1);
 }
 
 int getScore(point_type * points[]) {
@@ -170,12 +169,12 @@ int getScore(point_type * points[]) {
     int playertwo=0;
     int i;
     for( i=0;i<4;i++){
-	if(getState(points[i])==PLAYER_ONE)
+	if(getPlayer(points[i])==PLAYER_ONE) {
 	    playerone++;
-	else if(getState(points[i])==PLAYER_TWO)
+	} else if(getPlayer(points[i])==PLAYER_TWO) {
 	    playertwo++;
-    }
-
+	}
+    } 
     if(playerone>0 && playertwo==0){
 	return playerone;
     } else if(playertwo > 0 && playerone == 0){
@@ -192,9 +191,9 @@ int getStrength(board_type * b)
     int i;
     for( i=0;i<69;i++)
     {
-	sum+=(getScore(b->cl[i])>0)?weights[abs(getScore(b->cl[i]))]:-weights[abs(getScore(b->cl[i]))];
+	sum+=(getScore(b->consecutive_lines[i])>0)?weights[abs(getScore(b->consecutive_lines[i]))]:-weights[abs(getScore(b->consecutive_lines[i]))];
     }
-    return sum+(b->cp==PLAYER_ONE?16:-16);
+    return sum+(b->current_player==PLAYER_ONE?16:-16);
 }
 
 int winnerIs(board_type * b)
@@ -202,11 +201,11 @@ int winnerIs(board_type * b)
     int i;
     for( i=0;i<69;i++)
     {
-	if(getScore(b->cl[i])==4)
+	if(getScore(b->consecutive_lines[i])==4)
 	{
 	    return PLAYER_ONE;
 	}
-	else if(getScore(b->cl[i])==-4)
+	else if(getScore(b->consecutive_lines[i])==-4)
 	{
 	    return PLAYER_TWO;
 	}
@@ -218,18 +217,18 @@ int winnerIs(board_type * b)
 char * toString(board_type * b)
 {
 
-    char * temp = (char *)malloc(b->rows*(b->cols+1)*sizeof(char)+1);
+    char * temp = (char *)malloc(b->n_rows*(b->n_cols+1)*sizeof(char)+1);
 
     char * curr = temp;
     int y;
     int x;
-    for( y=b->rows-1;y>-1;y--){
+    for( y=b->n_rows-1;y>-1;y--){
 
-	for( x=0;x<b->cols;x++)
+	for( x=0;x < b->n_cols;x++)
 	{
-	    if(getState(b->grid[x][y])==EMPTY)
+	    if(getPlayer(b->grid[x][y])==EMPTY)
 		*curr = '-';
-	    else if(getState(b->grid[x][y])==PLAYER_ONE)
+	    else if(getPlayer(b->grid[x][y])==PLAYER_ONE)
 		*curr = 'O';
 	    else
 		*curr = 'X';
@@ -241,9 +240,9 @@ char * toString(board_type * b)
     return temp;
 }
 
-int cp(board_type * b)
+int getCurrentPlayer(board_type * b)
 {
-    return b->cp;
+    return b->current_player;
 }
 
 

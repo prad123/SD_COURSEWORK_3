@@ -7,30 +7,32 @@ static const int EMPTY = 0;
 
 struct point
 {
-    int x, y, state;
+    int x;		//x position
+    int y;		//y position
+    int player;		//PLAYER_ONE, PLAYER_TWO or EMPTY
 } ;
 
 typedef struct point point_type;
 
 struct board {
 
-	point_type*** grid;
-	int * heights;
+	point_type*** grid;	//grid of points
+	int * column_height;	//number of tokens in a column
 
-	int cols;
-	int rows;
+	int n_cols;		//number of columns
+	int n_rows;		//number of rows
 
-	int * moves;
-	int lm;
+	int * moves_history;	//last moved steps
+	int total_moves;	
 
-	int cp;
-	point_type *** cl;
+	int current_player;
+	point_type *** consecutive_lines; //winning line formation
     } ;
 typedef struct board board_type;
 
 point_type * newPoint(int x, int y);
-void setState(point_type * p, int player);
-int getState(point_type * p);
+void setPlayer(point_type * p, int player);
+int getPlayer(point_type * p);
 board_type * createBoard(int x, int y);
 void deleteboard(board_type* p);
 int validMove(board_type * b, int column);
