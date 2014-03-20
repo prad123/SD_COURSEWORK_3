@@ -17,11 +17,6 @@ void deletepoint(point_type* p)
     free(p);
 }
 
-int equalsPosition(point_type * a, point_type* b)
-{
-    return a->x == b->x && a->y == b->y;
-}
-
 void setState(point_type * a, int player)
 {
     a->state=player;
@@ -262,33 +257,6 @@ int cp(board_type * b)
     return b->cp;
 }
 
-int getRandomPlayerMove(board_type *b)
-{
-    int val =-1;
-    int possible[7];
-    int i;
-    for( i = 0; i <7; i++)
-    {
-	if(validMove(b,i))
-	{
-	    possible[i] = 1;
-	}
-	else
-	{
-	    possible[i] = 0;
-	}
-    }
-
-    while(val == -1)
-    {
-	int rad = rand() % 7;
-	if(possible[rad] == 1)
-	{
-	    val = rad;
-	}
-    }
-    return val;
-}
 
 int minValue(board_type * cB, int ply);
 int maxValue(board_type * cB, int ply);

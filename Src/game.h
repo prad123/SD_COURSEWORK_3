@@ -30,7 +30,6 @@ typedef struct board board_type;
 
 point_type * newPoint(int a, int b);
 void deletepoint(point_type* p);
-int equalsPosition(point_type * a, point_type* b);
 void setState(point_type * a, int player);
 int getState(point_type * a);
 point_type*** generateCL(point_type *** grid);
@@ -46,12 +45,8 @@ int getStrength(board_type * b);
 int winnerIs(board_type * b);
 char * toString(board_type * b);
 int cp(board_type * b);
-int getRandomPlayerMove(board_type *b);
-    // should return a number
 int getReasonedMove(board_type * cB);
-    // don't change this unless you understand it
 int minValue(board_type * cB, int ply);
-    //careful with this
 int maxValue(board_type * cB, int ply);
 
 #endif
