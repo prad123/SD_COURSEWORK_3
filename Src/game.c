@@ -155,7 +155,6 @@ void undoMove(board_type * b)
 	int last_position = b->moves_history[b->total_moves];
 	int row = b->column_height[last_position];
     setPlayer(b->grid[column][row-1],(EMPTY));
-    //setPlayer(b->grid[b->moves_history[b->total_moves]][b->column_height[b->moves_history[b->total_moves]]-1],(EMPTY));
     b->column_height[b->moves_history[b->total_moves]]--;
     b->total_moves--;
     b->current_player = -b->current_player;
@@ -222,7 +221,7 @@ int winnerIs(board_type * b)
 char * toString(board_type * b)
 {
 
-    char * temp = (char *)malloc(b->n_rows*(b->n_cols+1)*sizeof(char)+1);
+    char * temp = (char *)malloc(b->n_rows*(b->n_cols+1)*sizeof(char)+2);
 
     char * curr = temp;
     int y;
@@ -241,6 +240,7 @@ char * toString(board_type * b)
 	}
 	*curr = '\n';
 	curr++;
+	*curr = '\0';
     }
     return temp;
 }
