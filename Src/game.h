@@ -1,6 +1,9 @@
 #ifndef __GAME__
 #define __GAME__
 
+#define NCOLS 7
+#define NROWS 6
+
 static const int PLAYER_ONE = 1;
 static const int PLAYER_TWO = -1;
 static const int EMPTY = 0;
@@ -30,15 +33,15 @@ struct board {
     } ;
 typedef struct board board_type;
 
-point_type  newPoint(int x, int y);
-void setPlayer(point_type * p, int player);
-int getPlayer(point_type * p);
+inline point_type  newPoint(int x, int y);
+inline void setPlayer(point_type * p, int player);
+inline int getPlayer(point_type * p);
 board_type * createBoard(int x, int y);
 void deleteboard(board_type* p);
 int validMove(board_type * b, int column);
 void makeMove(board_type * b, int column);
 void undoMove(board_type * b);
-int validMovesLeft(board_type * b);
+inline int validMovesLeft(board_type * b);
 int getReasonedMove(board_type* b);
 int winnerIs(board_type * b);
 char * toString(board_type * b);

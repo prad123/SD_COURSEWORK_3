@@ -245,7 +245,7 @@ void all_tests(){
 }
 
 void test_setup(){
-	g_board = createBoard(cols, rows);
+	g_board = createBoard(NCOLS, NROWS);
 }
 
 void test_teardown(){

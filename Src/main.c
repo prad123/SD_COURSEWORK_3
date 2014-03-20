@@ -5,8 +5,12 @@
  * 
  */
 int main(int argc, char** argv) {
-	//    srand (time(NULL));
-	board_type * b = createBoard(7,6);
+	board_type * b = createBoard(NCOLS, NROWS);
+	if(NULL == b){
+		printf("Unable to generate board. Possible cause system low in memory.\n");
+		printf("Application aborting...\n");
+		return 1;
+	}
 
 	int input;
 	while((winnerIs(b)==0) && validMovesLeft(b))
@@ -23,9 +27,9 @@ int main(int argc, char** argv) {
 		else
 			makeMove(b, getReasonedMove(b));
 
-		char* output = toString(b);
-		printf("%s\n", output);
-		free(output);
+		//char* output = toString(b);
+		printf("%s\n", toString(b));
+		//free(output);
 
 
 	}
