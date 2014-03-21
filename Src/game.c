@@ -269,13 +269,17 @@ int winnerIs(board_type * b)
 char * toString(board_type * b)
 {
 
-	static char temp[NROWS*(NCOLS+1)+1] = "\0";
+	static char temp[NROWS*(NCOLS+4)+1] = "\0";
 
 	char * curr = temp;
 	int y;
 	int x;
 	for( y=b->n_rows-1;y>-1;y--){
 
+		*curr = '\t';
+		curr++;
+		*curr = '|';
+		curr++;
 		for( x=0;x < b->n_cols;x++)
 		{
 			if(getPlayer(&b->grid[x][y])==EMPTY)
@@ -292,6 +296,8 @@ char * toString(board_type * b)
 			}
 			curr++;
 		}
+		*curr = '|';
+		curr++;
 		*curr = '\n';
 		curr++;
 	}
