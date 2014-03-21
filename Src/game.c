@@ -30,13 +30,14 @@ int generateVerticalLines(board_type* b, int count){
 	int y	  = 0;
 	int x	  = 0;
 	int i	  = 0;
+	const int max_consec_moves_possible=4;
 
-	for(y=0;y<6;y++)
+	for(y=0;y<b->n_rows;y++)
 	{
 
-		for( x=0;x<4;x++)
+		for( x=0;x<max_consec_moves_possible;x++)
 		{
-			for(i=x;i<x+4;i++)
+			for(i=x;i<x+CONSEC_TOKENS_TO_WIN;i++)
 			{
 				b->consecutive_lines[count]=&b->grid[i][y];
 				count++;
@@ -51,11 +52,13 @@ int generateHorizontalLines(board_type* b, int count){
 	int y	  = 0;
 	int x	  = 0;
 	int i	  = 0;
-	for( x=0;x<7;x++)
+	const int max_consec_moves_possible=3;
+	
+	for( x=0;x<b->n_cols;x++)
 	{
-		for( y=0;y<3;y++)
+		for( y=0;y<max_consec_moves_possible;y++)
 		{
-			for( i=y;i<y+4;i++)
+			for( i=y;i<y+CONSEC_TOKENS_TO_WIN;i++)
 			{
 				b->consecutive_lines[count]=&b->grid[x][i];
 				count++;
@@ -71,12 +74,17 @@ int generateLeftLeaningDiagonal(board_type* b, int count){
 	int x	  = 0;
 	int t	  = 0;
 	int i	  = 0;
-	for( x=0;x<4;x++)
+
+	const int x_limit    = 4;
+	const int y_limit    = 3;
+	const int consec_tok = CONSEC_TOKENS_TO_WIN;
+
+	for( x=0;x<x_limit;x++)
 	{
-		for( y=0;y<3;y++)
+		for( y=0;y<y_limit;y++)
 		{
 
-			for( t=x,i=y;t<x+4 && i<y+4;t++,i++){
+			for( t=x,i=y;t<x+consec_tok && i<y+consec_tok;t++,i++){
 				b->consecutive_lines[count]=&b->grid[t][i];
 				count++;
 			}
@@ -92,11 +100,17 @@ int generateRightLeaningDiagonal(board_type* b, int count){
 	int x	  = 0;
 	int t	  = 0;
 	int i	  = 0;
-	for( x=0;x<4;x++)
+	
+	const int x_limit    = 4;
+	const int y_begin    = 5;
+	const int y_limit    = 2;
+	const int consec_tok = CONSEC_TOKENS_TO_WIN;
+
+	for( x=0;x<x_limit;x++)
 	{
-		for( y=5;y>2;y--)
+		for( y=y_begin;y>y_limit;y--)
 		{
-			for( t=x,i=y;t<x+4 && i>-1;t++,i--){
+			for( t=x,i=y;t<x+consec_tok && i>-1;t++,i--){
 				b->consecutive_lines[count]=&b->grid[t][i];
 				count++;
 			}
@@ -190,7 +204,7 @@ int getScore(point_type * points[]) {
 	int playertwo=0;
 	int i = 0;
 
-	for( i=0;i<4;i++){
+	for( i=0;i<CONSEC_TOKENS_TO_WIN;i++){
 		if(getPlayer(points[i])==PLAYER_ONE) 
 		{
 			playerone++;
@@ -219,7 +233,7 @@ int getStrength(board_type * b)
 	int weights[] = {0,1,10,50,600};
 	int i;
 	int score = 0;
-	for( i=0;i<69*4;i+=4)
+	for( i=0;i<POSSIBLE_CONSEC_MOVES;i+=4)
 	{
 		score = getScore(&b->consecutive_lines[i]);
 		if(score > 0)
@@ -231,19 +245,19 @@ int getStrength(board_type * b)
 			sum -= weights[abs(score)];
 		}
 	}
-	return sum+(b->current_player==PLAYER_ONE?16:-16);
+	return sum+(b->current_player==PLAYER_ONE?WEIGHTAGE:-WEIGHTAGE);
 }
 
 int winnerIs(board_type * b)
 {
 	int i;
-	for( i=0;i<69*4;i+=4)
+	for( i=0;i<POSSIBLE_CONSEC_MOVES;i+=4)
 	{
-		if(getScore(&b->consecutive_lines[i])==4)
+		if(getScore(&b->consecutive_lines[i])==CONSEC_TOKENS_TO_WIN)
 		{
 			return PLAYER_ONE;
 		}
-		else if(getScore(&b->consecutive_lines[i])==-4)
+		else if(getScore(&b->consecutive_lines[i])==-CONSEC_TOKENS_TO_WIN)
 		{
 			return PLAYER_TWO;
 		}
@@ -297,13 +311,13 @@ int getReasonedMove(board_type * b)
 	int moves[7];
 	int highest = 0;
 	int i;
-	for( i=0;i<7;i++)
+	for( i=0;i<b->n_cols;i++)
 	{
 		moves[i] = INT_MIN;
 		if(validMove(b, i))
 		{
 			makeMove(b,i);
-			moves[i] = minValue(b,4);
+			moves[i] = minValue(b,SEARCH_DEPTH);
 			if(moves[i]>=moves[highest])
 				highest=i;
 			undoMove(b);
@@ -317,7 +331,7 @@ int minValue(board_type * b, int ply)
 	int moves[7];
 	int lowest = 0;
 	int i;
-	for( i=0;i<7;i++)
+	for( i=0;i<b->n_cols;i++)
 	{
 		moves[i] = INT_MAX;
 		if(validMove(b,i))
@@ -351,7 +365,7 @@ int maxValue(board_type * b, int ply)
 	int moves[7];
 	int highest = 0;
 	int i;
-	for( i=0;i<7;i++)
+	for( i=0;i<b->n_cols;i++)
 	{
 		moves[i] = INT_MAX;
 		if(validMove(b,i))
